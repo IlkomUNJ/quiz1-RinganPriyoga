@@ -1,13 +1,19 @@
 #include <iostream>
 #include "bank_customer.h"
 #include "buyer.h"
+#include "limits"
+#include "string"
 
 enum PrimaryPrompt{LOGIN, REGISTER, EXIT};
+enum LOGIN_PROMPT{CHECK_ACCOUNT_STATUS, UPGRADE_ACCOUNT, CREATE_BANK_ACCOUNT, LOGOUT_TO_MAIN};
 
 using namespace std;
 
 int main() {
     //create a loop prompt 
+    bool g_isbuyer = true; 
+    bool g_isseller = false;
+    bool g_isbankinglinked = true;
     PrimaryPrompt prompt = LOGIN;
     while (prompt != EXIT) {
         cout << "Select an option: " << endl;
@@ -20,6 +26,75 @@ int main() {
         switch (prompt) {
             case LOGIN:
                 cout << "Login selected." << endl;
+                LOGIN_PROMPT login_prompt = CHECK_ACCOUNT_STATUS;
+                while (login_prompt != LOGOUT_TO_MAIN) {
+                    cout << "Select an option:" << endl;
+                    cout << "1. Check Account Status" << endl;
+                    cout << "2. Upgrade Account to Seller" << endl;
+                    cout << "3. Create Banking Account" << endl;
+                    cout << "4. Logout to Main Menu" << endl;
+                    cout << "Enter your choice: ";
+
+                    int login_choice;
+                    cin >> login_choice;
+                    login_prompt = static_cast<LOGIN_PROMPT>(login_choice - 1);
+                    switch (login_prompt) {
+                        case CHECK_ACCOUNT_STATUS:
+                            cout << "\n Check Account Status selected." << endl;
+                            cout << "\n Seller Account Status]" << endl;
+                            if (g_isbuyer && g_isseller) {
+                                cout << "You are logged in as Buyer and Seller." << endl;
+                            } else if (g_isbuyer) {
+                                cout << "You are logged in as Buyer." << endl;
+                            } else if (g_isseller) {
+                                cout << "You are logged in as Seller." << endl;
+                            } else {
+                                cout << "You are not logged in as Buyer or Seller." << endl;
+                            }
+                            if (g_isbuyer) {
+                                cout << "\n Banking Account Status" << endl;
+                                if (g_isbankinglinked) {
+                                    cout << "Your banking account is linked." << endl;
+                                } else {
+                                    cout << "You do not have a linked banking account." << endl;
+                                }
+                            } else {
+                                cout << "You need to be logged in as Buyer to check banking account status." << endl;
+                            }
+                            if (g_isbankinglinked) {
+                                cout << "Banking Account Details:" << endl;
+                                cout << "Your banking account is linked." << endl;
+                            }
+                            else {
+                                cout << "You do not have a linked banking account." << endl;
+                            }
+                            break;
+                        case UPGRADE_ACCOUNT:
+                            cout << "\n Upgrade Account to Seller selected." << endl;
+                            if (!g_isbuyer) {
+                                cout << "You need to be logged in as Buyer to upgrade to Seller." << endl;
+                            } else if (g_isseller) {
+                                cout << "You are already logged in as Seller." << endl;
+                            } else if (!g_isbankinglinked) {
+                                cout << "You need to have a linked banking account to upgrade to Seller." << endl;
+                            } else {
+                                g_isseller = true;
+                                cout << "You have successfully upgraded to Seller." << endl;
+                            }
+                            break;
+                        case CREATE_BANK_ACCOUNT:
+                            cout << "\n Create Banking Account selected." << endl;
+                            if (!g_isbuyer) {
+                                cout << "You need to be logged in as Buyer to create a banking account." << endl;
+                            } else if (g_isbankinglinked) {
+                                cout << "You already have a linked banking account." << endl;
+                            } else {
+                                g_isbankinglinked = true;
+                                cout << "You have successfully created and linked a banking account." << endl;
+                            }
+                            break;
+
+                    }
                 /* if Login is selected, based on authority then provide options:
                 assume user is logged in as Buyer for now
                 1. Chek Account Status (will display if user is Buyer or Seller or both and linked banking account status)
@@ -70,9 +145,9 @@ int main() {
                 9. Exit to main Menu
                 10. Exit Program
                 **/
-                break;
-            case REGISTER:
-                cout << "Register selected." << endl;
+                    break;
+                case REGISTER:
+                    cout << "Register selected." << endl;
                 /* if register is selected then went throuhh registration process:
                 1. Create a new Buyer Account
                 Must provides: Name, Home Address, Phone number, Email
@@ -80,18 +155,19 @@ int main() {
                 Must provides: Store Name, Store Address, Store Phone number, Store Email
                 After finished immediately logged in as Buyer/Seller
                 */
-                break;
-            case EXIT:
-                cout << "Exiting." << std::endl;
-                break;
-            default:
-                cout << "Invalid option." << endl;
-                break;
+                    break;
+                case EXIT:
+                    cout << "Exiting." << std::endl;
+                    break;
+                default:
+                    cout << "Invalid option." << endl;
+                    break;
+            }
+            cout << endl;
         }
-        cout << endl;
-    }
 
     //BankCustomer customer1(1, "Alice", 1000.0);
     //Buyer buyer1(1, customer1.getName(), customer1);
     return 1;
+    }
 }
